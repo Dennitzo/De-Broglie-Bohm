@@ -1,0 +1,112 @@
+# >>> Missum managed local files >>>
+# Keep project-specific rules outside this automatically maintained block.
+/.publication-renderer/
+/.publication-renderer.install-*/
+/.publication-renderer.previous-*/
+/Publikation-erzeugen.ps1
+/PDF-ERZEUGEN.md
+/publication-build.json
+/publication-build.json.*.tmp
+/publication-build.log
+/.publication-build.lock
+/publication.json
+/publication.json.*.tmp
+/.missum-publication-*/
+/.publication-*.tmp.pdf
+/.publication-build-*.tmp.pdf
+/.missum-repository-*.tmp
+# <<< Missum managed local files <<<
+
+# Python-Arbeitsumgebung und Cache-Verzeichnisse
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Lokale Agenten-, Visualisierungs- und Revisionsbestände
+.assistant/
+.claude/
+last-visualization.json
+publication-metrics.json
+sandbox.json
+runs/
+snapshots/
+
+# Generierte Lean-Prüfhelfer und Build-Artefakte
+work/generated/
+work/lean/.lake/
+work/lean/build/
+work/lean/Proof*.lean
+work/lean/MissumAudit*.lean
+work/lean/receipt-*.json
+
+# GitHub-Freigabe: Nur Publikation, Python-Simulationen, Lean-Beweise und Plots
+# Alles andere bleibt standardmaessig lokal.
+*
+!/.gitignore
+!/README.md
+
+# Publikation
+!/Publikation.md
+!/Publikation.pdf
+
+# Python-Simulationscode
+!/Bohmian_Field_Model.py
+!work/
+!work/**/
+!work/**/*.py
+
+# Pruef-, Analyse- und Publikationshilfen sind keine Simulationen.
+work/**/verify_*.py
+work/**/check_*.py
+work/**/*_check.py
+work/**/*_independent*.py
+work/**/*_review*.py
+work/**/*_compare.py
+work/**/*assess*.py
+work/**/*analy*.py
+work/**/*consolidat*.py
+work/**/*metrics*.py
+work/**/*_figures*.py
+work/**/plots/
+work/**/assemble_publication*.py
+work/**/integrate_*chapter.py
+work/**/patch_publikation.py
+work/**/finalize_*.py
+work/**/read_metrics.py
+work/generated/
+work/lean/.lake/
+work/lean/build/
+work/**/reference/
+work/**/*lean_lookup*.py
+work/**/inventory.py
+work/**/*diagnos*.py
+work/**/*validat*.py
+work/**/*reference*.py
+work/**/*plot*.py
+work/**/*_figure*.py
+work/**/*_accept.py
+work/**/*_diag.py
+work/fix_adm_escaping.py
+work/**/*integrate*publication*.py
+
+# Lean-Beweise; generierte Pruefhelfer und Build-Artefakte bleiben ausgeschlossen.
+!work/lean/
+!work/lean/**/*.lean
+work/lean/Proof*.lean
+work/lean/MissumAudit*.lean
+work/lean/Probe.lean
+work/lean/**/*.py
+
+# Plots
+!figures/
+!figures/**/
+!figures/**/*.png
+!figures/**/*.svg
+
+# Forschungsquellen und Belege duerfen nicht mitgegeben werden.
+Quellen/
+inputs/
