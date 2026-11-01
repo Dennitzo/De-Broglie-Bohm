@@ -1,6 +1,6 @@
-# De-Broglie-Bohm
+# De-Broglie-Bohm-Theorie und ihre Feld- und Geometrieerweiterung
 
-Dieses Repository enthält die deutschsprachige Fachpublikation zur de-Broglie-Bohm-Theorie sowie ausgewählte Python-Modelle, Lean-Beweise und Abbildungen.
+Dieses Repository enthält die deutschsprachige Fachpublikation zur De-Broglie-Bohm-Theorie sowie ausgewählte Python-Modelle, Lean-Beweise und Abbildungen.
 
 ## Publikation
 
