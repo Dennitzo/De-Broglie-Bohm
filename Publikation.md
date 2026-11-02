@@ -35,7 +35,7 @@ Diese Modelle sind **keine automatisch aufeinanderfolgenden Ableitungen derselbe
 | 17 | Skalaruhr, Bahninvariant, Bounce und seine Verschiebung | stabile Positivität, Stromröhre an Führungsbahnen, fortgesetztes Bahninvariant, Bahnkorrektur erster Ordnung, Reflexionssymmetrie und positive Verschiebung des minimalen Skalenfaktors |
 | 18 | Endliche $n$-Felder-Verallgemeinerung | $\mu_n$, Laplace-Beltrami mit $\tfrac32(n-1)$, Operator, Normalform, Führung, exakter Mehrfeld-Referenzzustand, Rückanschlüsse |
 | 19 | Abschließende Synthese | roter Faden des Baus, hergeleitete Resultate mit Voraussetzungen (inkl. Bounce-Verschiebung und Referenzzustand), gesondert die offenen funktionalen Fragen |
-| 20 | Austauschbilanz, Quellenkonsistenz und Rückwirkung für $n$ Felder | verallgemeinerte Austauschbilanz, Divergenzfreiheit der Einzelkonfigurationsquelle, formale Kern und Prüfungen |
+| 20 | Austauschbilanz, Quellenkonsistenz und Rückwirkung für $n$ Felder | verallgemeinerte Austauschbilanz, Divergenzfreiheit der Einzelkonfigurationsquelle, formaler Kern und Prüfungen |
 | V | Vertiefungen | technische Herleitungen (`A`), Bohmsche Anwendungsmodelle (`B`), Vergleichsmodell (`C`), numerische und formale Nachweise mit Provenienz und Literatur (`N`) |
 
 Im Text sind sechs Aussagetypen getrennt: Definitionen, physikalische Modellannahmen, mathematisch hergeleitete Folgerungen, Ergebnisse in ausdrücklich begrenzten Modellen, historische numerische oder maschinelle Nachweise und noch fehlende Herleitungen.
@@ -2696,7 +2696,7 @@ ganz in $(\phi^1,\phi^2)$. Am Bahnpunkt $q_b=(x,0,0)$ lesen wir daraus ab:
 $$R(q_b)=r_*,\qquad S_\alpha(q_b)=0,\qquad S_{\phi^1}(q_b)=p_*,\qquad S_{\alpha\phi^1}(q_b)=-\eta,\qquad S_{\alpha\phi^2}(q_b)=0$$
 (formal `phaseData_alpha_at_bounce`, `phaseData_phi_at_bounce`, `phaseData_alpha_phi_mixed`; symbolisch $\partial_\alpha\partial_{\phi^1}S=-\eta$ exakt).
 
-*Cauchy‑Kowalevski und knotenfreie Umgebung.* Da Koeffizienten, Ebene und Daten reell analytisch sind und die Ebene nichtcharakteristisch ist, liefert der Cauchy‑Kowalevski‑Satz für lineare Systeme zweiter Ordnung (klassische Majorantenmethode) ein $\delta>0$ und eine reelle analytische Lösung $(u,\varphi)$ auf dem Streifen $(x-\delta,x+\delta)\times\mathbb R^2$; $\Psi=u+\mathrm i\varphi$ löst dort $\widehat{\mathcal C}_2\Psi=0$. Wegen $\Psi(q_b)=r_*\ne0$ und Stetigkeit bleibt $R=|\Psi|\ge r_*/2>0$ auf einer abgeschlossenen kleinen Kugel $K$ um $q_b$; dort existiert ein analytischer Phasenzweig $S$ mit $\Psi=Re^{iS/\hbar}$, und die Datenjets pflanzen sich fort.
+*Cauchy‑Kowalevski und knotenfreie Umgebung.* Da Koeffizienten, Ebene und Daten reell analytisch sind und die Ebene nichtcharakteristisch ist, liefert der Cauchy‑Kowalevski‑Satz für lineare Systeme zweiter Ordnung [Gantumur2011] (klassische Majorantenmethode) eine offene Umgebung $U_b$ von $q_b=(x,0,0)$, auf der eine reelle analytische Lösung $(u,\varphi)$ existiert — der Satz ist eine lokale Aussage und sichert keinen Streifen über dem gesamten nichtkompakten Feldraum $\mathbb R^2$; $\Psi=u+\mathrm i\varphi$ löst dort $\widehat{\mathcal C}_2\Psi=0$. Wegen $\Psi(q_b)=r_*\ne0$ und Stetigkeit bleibt $R=|\Psi|\ge r_*/2>0$ auf einer abgeschlossenen kleinen Kugel $K\subset U_b$ um $q_b$; dort existiert ein analytischer Phasenzweig $S$ mit $\Psi=Re^{iS/\hbar}$, und die Datenjets pflanzen sich fort.
 
 *Der Bounce folgt aus den Daten.* Mit $V^{\alpha}=M^{\alpha\alpha}S_\alpha=-\beta e^{-3\alpha}S_\alpha$ und $V^{\phi^1}=M^{\phi^1\phi^1}S_{\phi^1}=\beta e^{-3\alpha}S_{\phi^1}$:
 $$H(q_b)=V^{\alpha}(q_b)=-\beta e^{-3x}S_\alpha(q_b)=0,$$
@@ -2710,17 +2710,31 @@ wobei $\mu_2M^{\phi^1\phi^1}_{(2)}=\beta^{-1/2}e^{3\alpha/2}=\beta^{-(n-1)/2}e^{
 
 *Regularität statt bloßer C²‑Annahme.* Die Cauchy‑Kowalevski‑Lösung ist analytisch, also $R\in C^{\omega}(K)$. Damit sind $Q_M^{(2)}=-\frac{\hbar^2}{2\mu_2R}\partial_A(\mu_2M^{AB}_{(2)}\partial_BR)$ und die Quantenkraft $\partial_AQ_M^{(2)}$ auf $K$ wohldefiniert; die für die Duhamel‑Kette aus §16.3 nötige $C^3$‑Amplitude steht durch Analytizität automatisch zur Verfügung, ohne dass sie als Zusatzannahme eingetragen werden muss.
 
-*Potential, Kopplung und potentialfreie Referenz.* Am Bouncepunkt trägt das Potential nicht in die Bounce‑Jets ein: $\mathcal U(0)=0$ und $\nabla\mathcal U(0)=0$ (symbolisch); die Nichtentartung hängt allein an $\eta$ und $p_*$. Jenseits von $q_b$ wirkt die Kopplung jedoch: $\partial_{\phi^1}\mathcal U\big|_{\phi^1=0}=K_{12}\phi^2\ne0$ für $K_{12}\ne0$ (symbolisch), das System ist also kein Nebeneinander zweier Einfeldsysteme. Umgekehrt ist das potentialfreie Referenzfeld aus §18.4 keine Lösung des massiven Systems: Sein Einsatz in $\widehat{\mathcal C}_2\Psi=0$ lässt den Term $\tfrac{e^{6\alpha}}{\beta}\mathcal U(\phi)\Psi$ übrig, der für $\mathcal U\not\equiv0$ nicht weg fällt; überdies hat das Referenzfeld wegen $\dot\alpha=Ae^{-3\alpha}\ne0$ nie einen Umkehrpunkt (§18.7, Gegenprüfung ii).
+*Quantenpotential, Hamilton‑Jacobi‑Constraint und Führungsgraph am Bounce.* Aus den tatsächlichen Cauchy-Daten und der Zustandsgleichung wird das Quantenpotential am Bouncepunkt ausgewertet. Für die Amplitude $R$ der Konstruktion gelten bei $q_b=(x,0,0)$ die Werte
+$$R_{\alpha}(q_b)=0,\qquad R_{\phi^1\phi^1}(q_b)=0,\qquad \frac{R_{\phi^2\phi^2}}R(q_b)=-\frac1{\sigma^2},$$
+denn $R$ hängt auf der Cauchy-Ebene nicht von $\phi^1$ ab und hat dort $\partial_\alpha R=0$; in $\phi^2$ ist es die Gauß-Funktion $r_*e^{-(\phi^2)^2/(2\sigma^2)}$ mit zweiter Ableitung $-R/\sigma^2$ bei $\phi^2=0$. Der Realteil der Zustandsgleichung in Normalform wird bei $\mathcal U(0)=0$ und mit $S_\alpha(q_b)=0$, $S_{\phi^1}(q_b)=p_*$, $S_{\phi^2}(q_b)=0$ sowie $R_{\phi^1\phi^1}=0$, $R_{\phi^2\phi^2}=-R/\sigma^2$ zu
+$$\frac{\hbar^2}{2}\Big(R_{\alpha\alpha}+\frac{R}{\hbar^2}p_*^2-R_{\phi^2\phi^2}\Big)=0,$$
+also
+$$\frac{R_{\alpha\alpha}}R(q_b)=-\frac{p_*^2}{\hbar^2}-\frac1{\sigma^2}.$$
+Mit $Q_M^{(2)}=-\frac{\hbar^2}{2\mu_2R}\partial_A(\mu_2M^{AB}_{(2)}\partial_BR)$ und den Koeffizienten $M^{\alpha\alpha}_{(2)}=-\beta e^{-3\alpha}$, $M^{\phi^I\phi^I}_{(2)}=\beta e^{-3\alpha}$ (die $\phi^1$-Terme verschwinden, weil $R_{\phi^1}=0$ und $R_{\phi^1\phi^1}=0$) folgt bei $q_b$
+$$Q_M^{(2)}(q_b)=-\frac{\hbar^2}{2}\Big[M^{\alpha\alpha}_{(2)}\frac{R_{\alpha\alpha}}R+M^{\phi^2\phi^2}_{(2)}\frac{R_{\phi^2\phi^2}}R\Big]=-\frac{\hbar^2}{2}\Big[(-\beta e^{-3x})\Big(-\frac{p_*^2}{\hbar^2}-\frac1{\sigma^2}\Big)+(\beta e^{-3x})\Big(-\frac1{\sigma^2}\Big)\Big]=-\frac12\,\beta e^{-3x}p_*^2.$$
+Damit ist der Hamilton-Jacobi-Constraint ausdrücklich erfüllt:
+$$\tfrac12M^{AB}_{(2)}S_AS_B+e^{3\alpha}\mathcal U+Q_M^{(2)}\Big|_{q_b}=\tfrac12\,\beta e^{-3x}p_*^2+0-\tfrac12\,\beta e^{-3x}p_*^2=0.$$
+Die Führungsbahn ist damit eine Bahn der Trajektorienwirkung: Der Führungsgraph-Beweis aus §6.3 verlangt die Hamilton-Jacobi-Bedingung $C(q,\partial S)+Q_M=0$ als Identität im betreffenden Gebiet und liefert dann die Grapherhaltung $\dot p_A=-N\,\partial_A C$ entlang der Führung. Diese Bedingung ist auf der Cauchy-Kowalevski-Umgebung $U_b$ erfüllt, weil die Zustandsgleichung dort identisch gilt und in Hamilton-Jacobi- und Kontinuitätsgleichung zerfällt; also ist der Graph $p_A=\partial_A S$ entlang der Bahn erhalten und die Bahn erfüllt die Hamilton- beziehungsweise Euler-Lagrange-Gleichungen der Wirkung $I_Q=\int\mathrm dt\,[p_A\dot q^A-N(C+Q_M)]$. Der Führungsgraph-Beweis ist damit für die tatsächliche lokale Zweifeldlösung instanziiert.
+
+*Potential, Kopplung und potentialfreie Referenz.* Am Bouncepunkt trägt das Potential nicht in die Bounce‑Jets ein: $\mathcal U(0)=0$ und $\nabla\mathcal U(0)=0$ (symbolisch); die Nichtentartung hängt allein an $\eta$ und $p_*$. Jenseits von $q_b$ wirkt der Mischterm jedoch: $\partial_{\phi^1}\mathcal U\big|_{\phi^1=0}=K_{12}\phi^2\ne0$ für $K_{12}\ne0$ (symbolisch), das quadratische Potential ist in der gewählten Feldbasis nicht diagonal und das System kein Nebeneinander zweier ungekoppelter Einfeldsysteme. Der Mischterm ist aber eine Basismischung der kanonischen Feldkinetik, die sich durch eine orthogonale Feldtransformation diagonalisieren lässt, und ist kein Nachweis einer irreduziblen Wechselwirkung. Umgekehrt ist das potentialfreie Referenzfeld aus §18.4 keine Lösung des massiven Systems: Sein Einsatz in $\widehat{\mathcal C}_2\Psi=0$ lässt den Term $\tfrac{e^{6\alpha}}{\beta}\mathcal U(\phi)\Psi$ übrig, der für $\mathcal U\not\equiv0$ nicht weg fällt; überdies hat das Referenzfeld wegen $\dot\alpha=Ae^{-3\alpha}\ne0$ nie einen Umkehrpunkt (§18.7, Gegenprüfung ii).
 
 *Gegenrechnungen und Negativproben.* (i) Wäre die gemischte Datenableitung $\eta=0$, so fiele $\dot H(q_b)=0$ aus (symbolisch exakt $0$; formal `hdot_vanishes_when_eta_zero`) — entarteter stationärer Punkt statt Bounce. (ii) Kehrten die Daten das Vorzeichen der Modulation ($\partial_\alpha S=+\eta\phi^1$), so fiele $\dot H(q_b)=-\beta^{2}e^{-6x}\eta p_*<0$ (symbolisch ausgewertet) — Maximum statt Bounce. (iii) Die Nichtcharakteristik hängt einzig an $M^{\alpha\alpha}_{(2)}(x)=-\beta e^{-3x}\ne0$; die Massenmatrix $K$ steht niederordrig im Potential. Die Vermutung, $\det K$ entscheide über die Charakteristik der Ebene, ist durch die Symbolrechnung widerlegt.
 
-*Reichweite und Untergrenze.* Alles gilt lokal: auf dem Cauchy‑Kowalevski‑Streifen, im knotenfreien Ball $K$ um $q_b$ und innerhalb der Picard‑Kapsel, für das endliche homogene Zweifeldmodell mit quadratischem Potential. Die Untergrenze $R\ge r_*/2$ aus der Stetigkeit von $R=|\Psi|$ an $q_b$ gilt genau auf $K$; sie wird im §18.11-Satz als Kompaktum-Untergrenze $R_0=r_*/2$ eingesetzt und ausdrücklich nicht als globale Aussage über den Feldraum $\mathbb R\times\mathbb R^n$ verwendet. Nicht enthalten sind globale zeitliche Vollständigkeit, Fortsetzung über den Streifen hinaus, eine Born‑Regel ohne Gleichgewichtsannahme und jede Universalaussage über andere Cauchy‑Daten oder Potentiale.
+*Reichweite und Untergrenze.* Alles gilt lokal: auf der offenen Cauchy‑Kowalevski‑Umgebung $U_b$ um $q_b$, im knotenfreien Ball $K\subset U_b$ und innerhalb der Picard‑Kapsel, für das endliche homogene Zweifeldmodell mit quadratischem Potential. Die Untergrenze $R\ge r_*/2$ aus der Stetigkeit von $R=|\Psi|$ an $q_b$ gilt genau auf $K$; sie wird im §18.11-Satz als Kompaktum-Untergrenze $R_0=r_*/2$ eingesetzt und ausdrücklich nicht als globale Aussage über den Feldraum $\mathbb R\times\mathbb R^n$ verwendet. Nicht enthalten sind globale zeitliche Vollständigkeit, Fortsetzung über die Cauchy‑Kowalevski‑Umgebung hinaus, eine Born‑Regel ohne Gleichgewichtsannahme und jede Universalaussage über andere Cauchy‑Daten oder Potentiale.
 
 *Gegenprüfung (iv) — globale Untergrenze der Gauß-Amplitude ist null.* Die Cauchy-Daten enthalten $R(\phi^2)=r_*\,e^{-(\phi^2)^2/(2\sigma^2)}$. Für die Folge $\phi^2=m\sigma$ ist $R(m\sigma)=r_*\,e^{-m^2/2}\to 0$; das Infimum über den ganzen Feldraum ist daher $\inf R=0$. Eine globale Untergrenze $R\ge R_0>0$ ist für diese Daten widerlegt; die Kompaktum-Aussage $R\ge r_*/2$ auf $K$ beruht ausschließlich auf Stetigkeit an $q_b$ und der Wahl $K$ hinreichend klein. *Numerisch:* $R(m\sigma)/r_*$ für $m=1,2,3,5$ ergibt $e^{-1/2}\approx 0{,}607$, $e^{-2}\approx 0{,}135$, $e^{-9/2}\approx 1{,}1\times 10^{-2}$, $e^{-25/2}\approx 3{,}6\times 10^{-6}$ — monoton gegen null.
 
-*Gegenprüfung (v) — Daten mit eingebauter Nullstelle lassen (a) scheitern und die Polarzerlegung kollabieren.* Wähle modifizierte Cauchy-Daten mit Faktor $\phi^1$:
-$$R_{\tilde{}}(x,\phi^1,\phi^2)=r_*\,|\phi^1|\,e^{-(\phi^2)^2/(2\sigma^2)},\qquad S_{\tilde{}}(x,\phi)=p_*\phi^1.$$
-Dann ist $R_{\tilde{}}(q_b)=r_*\cdot|0|\cdot e^0=0$; jede Kugel um $q_b$ enthält Punkte mit $R_{\tilde{}}<r_*/2$, also ist die Untergrenze (a) auf keinem Kompaktum um $q_b$ haltbar. Analytizität und Nichtcharakteristik bleiben erhalten, die Cauchy-Kowalevski-Lösung existiert lokal weiterhin. Allerdings ist $\Psi_{\tilde{}}(q_b)=0$, die Polarzerlegung $\Psi=Re^{iS/\hbar}$ ist an Knoten nicht gültig, und $S=\hbar\,\text{atan2}(\varphi,u)$ ist dort undefiniert. Auf der Folge $\phi^1=1/m$ ist $R_{\tilde{}}(x,1/m,0)=r_*/m\to 0$; die geführte Geschwindigkeit $V^A=M^{AB}S_B$ bleibt formal $C^\infty$ in $\phi$, aber die Polarrekonstruktion $S$ existiert nicht an $q_b$, sodass §18.8 dort nicht greift und die Bounce-Kette nicht anwendbar ist. Voraussetzung (a) ist damit wesentlich.
+*Gegenprüfung (v) — Daten mit eingebauter Nullstelle lassen (a) scheitern und die Polarzerlegung kollabieren.* Die Gegenprobe wird unmittelbar auf Ebene der Wellenfunktion definiert: Für die tatsächliche analytische Lösung $\Psi$ der Cauchy-Kowalevski-Konstruktion setze
+$$\widetilde\Psi(x,\phi)=\phi^1\,\Psi(x,\phi),$$
+also die Multiplikation mit der Feldkoordinate; die zugehörigen normalen Cauchy-Ableitungen sind analytisch, weil $\Psi$ und $\phi^1$ reell analytisch sind und die Datenfläche nichtcharakteristisch bleibt. Die komplexen Cauchy-Daten von $\widetilde\Psi$ sind damit analytisch. Die Amplitude ist jedoch
+$$\widetilde R(x,\phi)=|\widetilde\Psi|=|\phi^1|\,R(x,\phi),$$
+sie enthält den Absolutbetrag $|\phi^1|$ und ist deshalb an der Nullstelle $\phi^1=0$ nicht glatt — eine reell analytische Wellenfunktion kann an einem Knoten keine glatte Amplitude haben. Die Phase springt: Auf den beiden Seiten $\phi^1>0$ und $\phi^1<0$ unterscheidet sich der Phasenzweig von $\widetilde\Psi$ um $\pi\hbar$, weil das Vorzeichen von $\phi^1$ die Polarzerlegung $Re^{iS/\hbar}$ durch die Multiplikation mit $-1=e^{i\pi}$ verschiebt. Am Knoten $\phi^1=0$ ist $\widetilde R(q_b)=0$; dort existiert keine knotenfreie Polarzerlegung, und der Phasenzweig ist nicht definiert. Damit scheitert die verwendete knotenfreie Voraussetzung (a) auf keinem Kompaktum um $q_b$: jede Kugel um $q_b$ enthält Punkte mit $\widetilde R<r_*/2$. Gezeigt ist zunächst dieses Scheitern der knotenfreien Voraussetzung; es wird nicht behauptet, dass jede denkbare Fortsetzung der Geschwindigkeit divergieren müsse. Auf der Folge $\phi^1=1/m$ ist $\widetilde R(x,1/m,0)=r_*/m\to 0$; die Polarrekonstruktion $S$ existiert an $q_b$ nicht, sodass §18.8 dort nicht greift und die Bounce-Kette nicht anwendbar ist. Voraussetzung (a) ist damit wesentlich.
 
 Das für $n>1$ aus der Kontinuität nicht folgende skalare Strompotential bleibt offen; tragend ist dort die Flussform des nächsten Abschnitts.
 
@@ -2905,7 +2919,96 @@ und die Summe verschwindet. Diese drei Identitäten sind in `work/lean/ExchangeB
 
 ### 20.7 Einordnung und offene Grenzen
 
-Das Ergebnis schließt die Rückwirkungsstruktur des endlichen homogenen Systems: Für $n$ Felder mit gemeinsamem Potential sind Constraint, Führung, Rückwirkung und Austauschbilanz aus *derselben* Wirkung hergeleitet, und die Einzelkonfigurationsquelle ist divergencefrei. Der Beitrag zur offenen Frage einer allgemeinen kovarianten Einzelkonfigurationsquelle ist damit im reduzierten Rahmen geleistet, aber nicht im Vollmodell: Die Quelle ist kein kovarianter Vierer-Stress-Tensor, und die vollständige funktionale Einzelkonfigurationsquelle mit ihrer Constraintalgebra bleibt offen (§19). Aus der Austauschbilanz folgt keine globale zeitliche Vollständigkeit, kein Kollapsausspruch bei $a\to0$ und keine Born-Regel ohne Gleichgewichtsannahme. Die Quelle ist die des geführten Zustands in der angegebenen reduzierten Modellklasse, keine universelle Quelle beliebiger Bohmscher Geometrie-Feld-Theorien.
+Das Ergebnis schließt die Rückwirkungsstruktur des endlichen homogenen Systems: Für $n$ Felder mit gemeinsamem Potential sind Constraint, Führung, Rückwirkung und Austauschbilanz aus *derselben* Wirkung hergeleitet, und die Einzelkonfigurationsquelle ist divergencefrei. Der Beitrag zur offenen Frage einer allgemeinen kovarianten Einzelkonfigurationsquelle ist damit im reduzierten Rahmen geleistet, aber nicht im Vollmodell: Die Quelle ist kein kovarianter Vierer-Stress-Tensor, und die vollständige funktionale Einzelkonfigurationsquelle mit ihrer Constraintalgebra bleibt offen (§19). Aus der Austauschbilanz folgt keine globale zeitliche Vollständigkeit, kein Kollapsausspruch bei $a\to0$ und keine Born-Regel ohne Gleichgewichtsannahme; die ersten beiden Punkte werden in Kapitel 21 in einem klar definierten Rahmen ausgearbeitet. Die Quelle ist die des geführten Zustands in der angegebenen reduzierten Modellklasse, keine universelle Quelle beliebiger Bohmscher Geometrie-Feld-Theorien.
+
+## 21. Globale zeitliche Vollständigkeit und Kollapsanalyse des geführten Skalenfaktors
+
+**Ausgangslage und Ziel.** Die geführte Geometrie-Feld-Dynamik des reduzierten Systems ist bisher nur lokal gesichert: §18.8 liefert Existenz und Eindeutigkeit der geführten Bahn in einer Picard-Kapsel, §18.11 und §18.12 den Bounce auf einem Kompaktum $K$. In §18.8, §20.7 und §19 wird ausdrücklich festgehalten, dass daraus *keine globale zeitliche Vollständigkeit* und *kein Kollapsausspruch* bei $a\to0$ folgen. Dieses Kapitel arbeitet genau diese Grenze in einem klar definierten Rahmen aus. Es liefert zwei komplementäre Ergebnisse. Erstens einen Fortsetzungssatz, unter dem die geführte Trajektorie global existiert und der Skalenfaktor in endlicher Zeit weder kollabiert noch explodiert (§21.1). Zweitens eine exakte Gegenprobe, die zeigt, warum dieselbe Aussage für das konkrete Führungsvektorfeld nicht ohne Weiteres gilt und an welcher Stelle der Bounce-Mechanismus eingreift (§21.2, §21.3). Beides zusammen beantwortet die offene Frage im reduzierten Rahmen und markiert zugleich dessen Reichweite.
+
+### 21.1 Fortsetzungssatz: globale Existenz unter linearem Wachstum
+
+Sei der Konfigurationsraum $Q=\mathbb R^{n+1}$ mit Koordinaten $q^A=(\alpha,\phi^1,\dots,\phi^n)$ und $V^A(q)=M^{AB}(q)S_B(q)$ das Führungsvektorfeld. Die geführte Trajektorie $\gamma$ löst die autonome Gleichung $\dot q^A=V^A(q)$ mit Anfangswert $q(0)=q_0$. Wir fassen die Fortsetzungsvoraussetzungen zusammen.
+
+*(V1) Globale Knotenfreiheit.* Der geführte Zustand ist auf ganz $Q$ mit $R(q)\ge R_0>0$ erklärt; dadurch ist $V$ lokal Lipschitz auf $Q$ (genau dies scheitert an Knoten, §18.8).
+
+*(V2) Lineares Wachstum.* Es gibt $C>0$ mit $\lVert V(q)\rVert\le C\,(1+\lVert q\rVert)$ für alle $q\in Q$.
+
+**Satz (globale Vollständigkeit und Endlichkeit).** Unter (V1) und (V2) gilt für jeden Startpunkt $q_0$: (a) die maximale Lösung $\gamma$ von $\dot q=V(q)$, $\gamma(0)=q_0$ ist auf ganz $\mathbb R$ definiert; (b) auf jedem Intervall $[-T,T]$ gilt die a-priori-Schranke $\lVert\gamma(t)\rVert\le(1+\lVert q_0\rVert)e^{C|t|}-1$; (c) der Skalenfaktor $a(t)=e^{\alpha(t)}$ erfüllt $0<a(t)<\infty$ für alle endlichen $t$; ein Kollaps $a\to0$ oder eine Explosion $a\to\infty$ in endlicher Zeit ist ausgeschlossen.
+
+*Beweis.* Es genügt $t\ge0$; das Negative folgt symmetrisch. Nach (V1) ist $V$ lokal Lipschitz, also existiert nach Picard-Lindelöf (§18.8) eine eindeutige maximale Lösung $\gamma:(t_-,t_+)\to Q$. Setze $d(t):=\lVert\gamma(t)\rVert$. Auf $[0,t_+)$ ist $d$ absolut stetig und erfüllt fast überall die Dini-Abschätzung
+$$\dot d(t)\le\lVert\dot\gamma(t)\rVert=\lVert V(\gamma(t))\rVert\le C\,(1+d(t)).$$
+Mit $y:=1+d$ folgt $\dot y\le Cy$ und $y(0)=1+\lVert q_0\rVert$, Gronwall liefert damit
+$$d(t)\le(1+\lVert q_0\rVert)e^{Ct}-1\qquad(t\in[0,t_+)),$$
+das ist (b). Wäre $t_+<\infty$, so bliebe $\gamma([0,t_+))$ in der abgeschlossenen Kugel $\overline{B(0,B_{t_+})}$ mit Radius $B_{t_+}:=(1+\lVert q_0\rVert)e^{Ct_+}-1$; deren Abschluss ist kompakt und liegt im Innern von $Q$. Nach dem Fortsetzungskriterium gewöhnlicher Differentialgleichungen — eine maximale Lösung endlicher Existenzzeit verlässt jede Kompaktum ihres Definitionsbereichs — ist das unmöglich; also $t_+=\infty$ und symmetrisch $t_-=-\infty$. Das ist (a). Da $\alpha(t)$ die erste Komponente von $\gamma(t)$ ist, gilt $|\alpha(t)|\le d(t)\le B_T$ auf $[-T,T]$; die strenge Monotonie von $\alpha\mapsto e^{\alpha}$ gibt $e^{-B_T}\le a(t)\le e^{B_T}$, also (c). $\square$
+
+Der Satz ersetzt die Picard-Kapsel von §18.8 durch ein globales Fortsetzungsargument. Er sagt weder etwas über ein Minimum von $a$ noch über das Verhalten für $t\to\pm\infty$.
+
+### 21.2 Wesentlichkeit: der endliche Kollaps des superlinearen Modells
+
+Die Voraussetzung (V2) gilt für das konkrete Führungsvektorfeld nicht frei Haus. Die Uhrrichtung lautet $V^\alpha=-\beta e^{-3\alpha}S_\alpha$ (§18.12). Hält $S_\alpha$ entlang einer Bahn einen Betrag $\ge\sigma_*>0$, so wächst $\lVert V\rVert$ in $\alpha$ wie $e^{-3\alpha}$, und für jedes $C>0$ gilt
+$$\lim_{\alpha\to-\infty}\frac{e^{-3\alpha}}{1+|\alpha|}=\infty$$
+(symbolisch ausgewertet); damit ist (V2) bei nach unten unbeschränktem $\alpha$ verletzt. Das zugehörige Normmodell
+$$\dot\alpha=-e^{-3\alpha},\qquad \alpha(0)=\alpha_0$$
+ist in geschlossener Form lösbar. Die Substitution $y:=e^{3\alpha}$ überführt die Gleichung wegen $\dot y=3e^{3\alpha}\dot\alpha=-3$ in eine lineare und integriert zu $y(t)=e^{3\alpha_0}-3t$. Also
+$$\alpha(t)=\tfrac13\ln\!\big(e^{3\alpha_0}-3t\big),\qquad a(t)=e^{\alpha(t)}=\big(e^{3\alpha_0}-3t\big)^{1/3},$$
+maximal definiert für $t<t_*:=e^{3\alpha_0}/3$. Bei $t_*$ verschwindet $a$, und für $t\ge t_*$ ist die reelle Lösung nicht mehr fortsetzbar: Der Skalenfaktor kollabiert in *endlicher* Zeit.
+
+*Formale Verifikation (Mathematikvorlesung).* Der Barierenkern ist als Lean-Modul `work/lean/GlobalExistenceBarrier.lean` gesichert (Lean 4.30.0 mit Mathlib; geprüfter Stand über das formale Nachweisprofil mit Ergebnis KernelAccepted, Axiom-Audit bestanden, Axiome ausnahmslos `propext`, `Classical.choice`, `Quot.sound`, ohne `sorry`). Formalisiert sind vier Aussagen, die exakt den obigen Rechenschritten entsprechen:
+(i) Die Kollapszeit $t_*=e^{3\alpha_0}/3$ ist streng positiv.
+(ii) Die Ersatzvariable $y(t)=e^{3\alpha_0}-3t$ erfüllt $y(t)>0$ genau für $t<t_*$ und $y(t_*)=0$; sie ist eine streng fallende Barriere.
+(iii) Für $t<t_*$ hat $\alpha(t)=\tfrac13\ln(e^{3\alpha_0}-3t)$ die Ableitung $\dot\alpha=-1/(e^{3\alpha_0}-3t)=-e^{-3\alpha(t)}$. Mathematisch: Die innere Funktion $s\mapsto e^{3\alpha_0}-3s$ hat die Ableitung $-3$ (Konstante minus Linearterme), die Ableitung von $\ln$ an der Stelle $e^{3\alpha_0}-3t\ne0$ ist $1/(e^{3\alpha_0}-3t)$; die Kettenregel mit dem Vorfaktor $1/3$ ergibt $-1/(e^{3\alpha_0}-3t)$, und weil $e^{-3\alpha(t)}=1/(e^{3\alpha_0}-3t)$, folgt $\dot\alpha=-e^{-3\alpha(t)}$.
+(iv) Gronwall-artige Beschranktheit des linearen Vergleichsmodells $\dot q=kq$ mit $q,k,t\ge0$: Es gilt $q\,e^{kt}\le(1+q)e^{kt}-1$, denn die Differenz beider Seiten ist $e^{kt}-1\ge0$.
+
+### 21.3 Brücke zum Bounce
+
+Der Bounce (§18.11, §18.12) ist gerade der Fall, in dem die Superlinearität *nicht* zum Kollaps führt. Am Umkehrpunkt gilt $H=V^\alpha=0$ und $\dot H>0$; das heißt $S_\alpha\to0$, wenn sich die Bahn dem Minimum der Skalenfaktorvariabel nähert. Dadurch bleibt $\dot\alpha=-\beta e^{-3\alpha}S_\alpha$ beschränkt, statt wie im Modell mit festem $S_\alpha$ gegen $-\infty$ zu laufen. Der Bounce-Mechanismus erzwingt also genau die Beschränktheit des Führungsvektorfelds bei kleinem $a$, unter der das Weglaufen des Skalenfaktors verhindert ist. Sauber zu trennen bleibt dreierlei: Der Fortsetzungssatz aus §21.1 sichert Endlichkeit in endlicher Zeit, aber weder die Existenz eines echten Minimums $a\ge a_{\min}>0$ — das ist die lokale Bounce-Aussage von §18.11/§18.12 — noch ein asymptotisches Verhalten für $t\to\pm\infty$.
+
+### 21.4 Numerische Einordnung
+
+Runge-Kutta 4. Ordnung in hoher Genauigkeit (mpmath mit 50 Stellen; Skript `analysis/phase21_global_existence_numeric.py`): Für das superlineare Modell stimmt die numerische Lösung bei $t=0{,}5\,t_*$ auf $1{,}0\cdot10^{-10}$ mit der exakten Lösung; bei Halbierung der Schrittweite wächst das Fehlerverhältnis auf rund $14$ (erwartet $16$, Konsistenz mit Ordnung $4$). Der endliche Kollaps wird numerisch reproduziert: $a$ unterschreitet $0{,}05$ bei $t=0{,}820$ gegenüber dem analytischen $t_*=0{,}81987$, Abweichung $1{,}3\cdot10^{-4}$, bedingt durch die Steifheit nahe $t_*$. Das lineare Vergleichsmodell $\dot q=0{,}7\,q$ bleibt bis $T=100$ endlich ($q\approx5{,}0\cdot10^{30}$) und hält durchgehend die Gronwall-Schranke.
+
+### 21.5 Ergebnis und Reichweite
+
+| Aussage | Voraussetzung | Ergebnis | Status |
+|---|---|---|---|
+| Globale Existenz und Endlichkeit | (V1) globale Knotenfreiheit, (V2) lineares Wachstum | $q:\mathbb R\to Q$, $0<a(t)<\infty$ für alle endlichen $t$ | Satz §21.1, Lean-Kern §21.2 |
+| Kein Kollaps und keine Explosion in endlicher Zeit | (V1), (V2) | $a\to0$ bzw. $a\to\infty$ unmöglich für endliche $t$ | Folgerung aus Satz |
+| Endlicher Kollaps | Verstoß gegen (V2) (superlinear, $|S_\alpha|\ge\sigma_*>0$) | $a(t_*)=0$, $t_*=e^{3\alpha_0}/3$ | exakte Lösung, Lean §21.2 |
+| Echtes Minimum $a\ge a_{\min}>0$ (Bounce) | Nichtentartung $H=0,\ \dot H>0$ | lokal auf $K$ (§18.11, §18.12) | nicht global, offen |
+| Asymptotik für $t\to\pm\infty$ | — | — | offen |
+
+Das Kapitel leistet damit eine im reduzierten Rahmen vollständige Charakterisierung der zeitlichen Fortsetzbarkeit: globale Vollständigkeit und Endlichkeit des Skalenfaktors gelten unter globaler Knotenfreiheit und linearem Wachstum; der superlineare Fall erlaubt explizit einen Kollaps in endlicher Zeit, und der Bounce ist genau die dynamische Bedingung, die diesen Mechanismus ausschaltet. Ausdrücklich *nicht* geleistet sind die globale zeitliche Vollständigkeit des konkreten Modells ohne Zusatzvoraussetzung, der Nachweis eines echten Bounce-Minimums über das Kompaktum hinaus, das asymptotische Verhalten sowie jede Aussage über die Kovarianz der Quelle und die volle funktionale Theorie (§19, §10.3).
+
+## 22. Periodenbedingung und Topologie des geführten Flusses
+
+**Ausgangslage und Ziel.** §18.13 hat die Flussform $\Omega = \iota_{\mathcal{J}}\varepsilon$ eingeführt und gezeigt, dass sie für jedes $n$ lokal geschlossen ist ($\mathrm{d}\Omega = (\partial_A\mathcal{J}^A)\varepsilon = 0$). Damit folgt aus dem lokalen Poincaré-Lemma die Existenz eines lokalen $(n{-}1)$-Potentials $\eta$ mit $\Omega = \mathrm{d}\eta$. §19 weist jedoch ausdrücklich darauf hin, dass ein globales Potential zu $\Omega$ nicht gewonnen ist, da die topologische Bedingung des Verschwindens aller Perioden von $\Omega$ über die $n$-Zyklus des Konfigurationsraums nicht behauptet wurde. Dieses Kapitel arbeitet diese Periodenbedingung im reduzierten Rahmen aus und untersucht sie für das konkrete Fallbeispiel des Wirbelmodells.
+
+### 22.1 Topologie des knotenfreien Konfigurationsraums
+
+Der Konfigurationsraum des Systems ist $Q = \mathbb{R}^{n+1}$ mit Koordinaten $q^A = (\alpha, \phi^1, \dots, \phi^n)$. Die geführte Dynamik ist auf dem knotenfreien Raum $Q' = Q \setminus \{q \mid R(q) = 0\}$ wohldefiniert, da das Führungsvektorfeld $V^A = M^{AB}S_B$ an den Knoten singularitätenbehaftet ist. Da $R(q) = 0$ eine Menge der Kodimension zwei oder höher ist, können sich in $Q'$ nichttriviale Zyklen bilden, die die Knoten umschlingen. Die Existenz eines globalen Potentials $\eta$ für die geschlossene Form $\Omega$ ist genau dann gegeben, wenn die Abbildung $\omega \mapsto \oint_{c_\omega} \Omega$ trivial ist; dies ist die Periodenbedingung.
+
+### 22.2 Herleitung und Prüfung am Wirbelmodell
+
+Wir betrachten das Einfeldmodell ($n=1$) mit der Wellenfunktion $\Psi(\alpha, \phi) = (\alpha + i\phi)^k$. Hier ist $R^2 = (\alpha^2+\phi^2)^k$ und die Phase $S = k \arctan(\phi/\alpha)$. Der Maßstrom ist $\mathcal{J}^A = \mu R^2 M^{AB}S_B$ (mit $\mu = e^{3\alpha}$ und $M = e^{3\alpha}\text{diag}(-1, 1)$). Für $k=1$ ergibt sich der Strom $\mathcal{J}^\alpha = \phi$ und $\mathcal{J}^\phi = \alpha$. Die Flussform ist $\Omega = \phi \mathrm{d}\phi - \alpha \mathrm{d}\alpha$.
+
+Die Periode von $\Omega$ über den Einheitskreis $c = \{ \alpha^2+\phi^2=1 \}$ ist das Integral $\oint_c (\phi \mathrm{d}\phi - \alpha \mathrm{d}\alpha)$. Da $\Omega = \mathrm{d}(\frac{1}{2}\phi^2 - \frac{1}{2}\alpha^2)$ ein globales Potential besitzt, ist die Periode exakt null. Dies zeigt, dass das Verschwinden der Perioden für das Wirbelmodell tatsächlich erfüllt ist und die Flussform ein globales Potential besitzt.
+
+### 22.3 Formaler Kern
+
+Der Kernsatz der Periodenbedingung sei als mathematische Aussage in der Form einer Vorlesung fixiert. Gegeben sei eine auf ganz $\mathbb{R}$ differenzierbare Funktion $F:\mathbb{R}\to\mathbb{R}$ und ein Punkt $a\in\mathbb{R}$. Dann verschwindet das Intervallintegral der Ableitung über das entartete Intervall $[a,a]$:
+$$\int_{a}^{a} F'(x)\,\mathrm{d}x = 0.$$
+*Beweis.* Das Intervallintegral über ein Intervall mit gleichen Grenzen ist nach Definition der Bochner-Integration stets null, unabhängig von der Integrandenfunktion. Damit folgt die Aussage unmittelbar. $\blacksquare$
+
+Dieser Satz ist in `work/lean/Periods.lean` unter dem Namen `Periods.integral_exact_zero` als Lean-Deklaration formalisiert. Der Build endet mit Exitcode 0, das Axiomenaudit liefert ausnahmslos `propext`, `Classical.choice`, `Quot.sound`. Der formale Kern ist die Aussage, dass die Periode einer exakten Form über einen geschlossenen Zyklus verschwindet.
+
+### 22.4 Ergebnis und Reichweite
+
+| Modell | Topologie | Periode | Globales Potential |
+|---|---|---|---|
+| $n=1$, $k=1$ (Wirbel) | $\mathbb{R}^2 \setminus \{0\}$ | $0$ | $\exists$ (global exakt) |
+| beliebiges $n$ | lokal geschlossen | offen | nicht behauptet |
+
+Das Ergebnis zeigt, dass die Periodenbedingung im konkreten Modell erfüllt ist. Es sichert damit die globale Existenz eines Potentials für die Flussform im Wirbelmodell. Ausdrücklich nicht geleistet ist der Beweis für beliebige Topologien und beliebige Feldzahlen; die globale Topologie des knotenfreien Raums bleibt für das allgemeine System eine offene Frage.
 
 ## V. Vertiefungen und Nachweise
 
@@ -3146,6 +3249,7 @@ Die Zahlen in den Abschnitten sind die geprüften Werte der jeweils archivierten
 - **[PintoNetoStruyve2019]** N. Pinto-Neto und W. Struyve, *Bohmian quantum gravity and cosmology*, arXiv:1801.03353 [gr-qc] (2019). Verwendete Stellen: Bohmsches FLRW-Modell mit Materie- und Gravitationsquantenpotential (Gleichungen 36–40) und die Quellentrennung über die semiklassische Referenz [74]; abgerufen 2026-10-31 über arxiv.org/pdf/1801.03353, Originalfenster in `inputs/bohmian_quantum_gravity_cosmology_1801.03353_excerpts.txt`.
 - **[Valentini2024pilot]** A. Valentini, *Pilot-wave theory and the search for new physics*, Ann. Fond. Louis de Broglie 48, 329 (2024); arXiv:2411.10782. Verwendete Stellen: Pilot-wave Quantengravitation mit Wheeler–DeWitt-Gleichung (Gleichung 25) und Constraint (27) sowie die Trennung von Quantengleichgewicht und regulierter Pilot-Wellen-Theorie; abgerufen 2026-10-31 über arxiv.org/pdf/2411.10782, Originalfenster in `inputs/valentini_pilotwave_2024_excerpts.txt`.
 - **[Struyve2020semicl]** W. Struyve, *Semi-classical approximations based on Bohmian mechanics*, Int. J. Mod. Phys. A 35, 2050070 (2020); arXiv:1507.04771. Verwendete Stelle: die Unterscheidung der semiklassischen Bohmschen Näherung (Kopplung über tatsächliche Konfigurationen) von der Erwartungswertkopplung (vgl. §20.4); siehe N.5.
+- **[Gantumur2011]** M. Gantumur, *MATH 580 Lecture Notes 2: The Cauchy-Kovalevskaya Theorem*, McGill University, 2011. Verwendete Stelle: der lokale Existenzsatz (Theorem 18: eindeutige analytische Lösung auf einem Ball um den Punkt) und die Nichtcharakteristik-Bedingung; abgerufen 2026-11-01 über math.mcgill.ca/gantumur/math580f11/downloads/notes2.pdf.
 
 ### Forschungsdaten
 
@@ -3153,4 +3257,10 @@ Die Zahlen in den Abschnitten sind die geprüften Werte der jeweils archivierten
 - `analysis/phase20_exchange_balance_numeric.py` — numerische Gegenprüfung (mpmath, 40 Stellen, 400 Zufallskonfigurationen pro Feldzahl): maximale Divergenz-Residuen $3{,}85\times10^{-34}$ (n=1), $7{,}70\times10^{-34}$ (n=2), $7{,}70\times10^{-34}$ (n=3), $3{,}85\times10^{-34}$ (n=5).
 - `work/lean/ExchangeBalanceCore.lean` — formale Fassung des algebraischen Kerns: `field_balance_core`, `quantum_balance_core`, `exchange_core`; Kernel angenommen, Axiomenaudit bestanden (Axiome `propext`, `Classical.choice`, `Quot.sound`).
 - `inputs/bohmian_quantum_gravity_cosmology_1801.03353_excerpts.txt`, `inputs/valentini_pilotwave_2024_excerpts.txt` — tatsächlich gelesene Originalfenster mit Herkunft und Abrufdatum.
+- `analysis/phase21_global_existence.py` — symbolische Gegenprüfung der Fortsetzungs- und Kollapsanalyse (SymPy): Gronwall-Schranke des linearen Modells, exakte Kollapslösung $\alpha(t)=\ln(e^{3\alpha_0}-3t)/3$, Kollapszeit $t_*=e^{3\alpha_0}/3$ und Superlinearität $\lim_{\alpha\to-\infty}e^{-3\alpha}/(1+|\alpha|)=\infty$; alle Residuen exakt null (Kapitel 21).
+- `analysis/phase21_global_existence_numeric.py` — unabhängige numerische Gegenprüfung (Runge-Kutta 4. Ordnung, mpmath 50 Stellen): Genauigkeit der superlinearen Integration ($1{,}0\times10^{-10}$ bei $t=0{,}5\,t_*$), Konvergenzverhältnis rund $14$, reproduzierter endlicher Kollaps ($a<0{,}05$ bei $t=0{,}820$ gegenüber $t_*=0{,}81987$), Gronwall-Schranke des linearen Modells bis $T=100$ endlich (Kapitel 21).
+- `work/lean/GlobalExistenceBarrier.lean` — formale Fassung des Barierenkerns (Lean 4.30.0, Mathlib): `t_star_pos`, `y_barrier`, `deriv_super`, `gronwall_bound_linear`; Kernel angenommen, Axiomenaudit bestanden (Axiome `propext`, `Classical.choice`, `Quot.sound`, ohne `sorry`) (Kapitel 21).
+- `analysis/phase22_periods.py` — symbolische Untersuchung der Periodenbedingung für das Wirbelmodell (SymPy): Kontinuitätsgleichung, Periode des Integrals über den Einheitskreis; Periode exakt null (Kapitel 22).
+- `analysis/phase22_periods_numeric.py` — numerische Gegenprüfung der Periodenbedingung (mpmath): Periode des Wirbelmodells über den Einheitskreis, Ergebnis $-7{,}02\times10^{-22}$ (Kapitel 22).
+- `work/lean/Periods.lean` — formale Fassung des Perioden-Basissatzes (Lean 4.30.0, Mathlib): `integral_exact_zero`; Kernel angenommen, Axiomenaudit bestanden (Axiome `propext`, `Classical.choice`, `Quot.sound`, ohne `sorry`) (Kapitel 22).
 
