@@ -13,7 +13,6 @@ Die Arbeit behandelt Bohmsche Teilchen- und Felddynamik, relativistische Modelle
 
 - `work/`: freigegebene Python-Modelle und Lean-Beweismodule unter `work/lean/`.
 - `figures/`: Abbildungen und Plots als PNG- und SVG-Dateien.
-- `Bohmian_Field_Model.py`: ein endliches Bohmsches Zweimoden-Feldmodell.
 
 Die freigegebene Dateiauswahl enthält keine lokalen Quellenkopien, Rohdaten, Forschungsnotizen, Prüfberichte oder Build-Artefakte. Literaturangaben und fachliche Einordnung stehen in der Publikation.
 

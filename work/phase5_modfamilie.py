@@ -638,9 +638,339 @@ def load_existing() -> None:
         res = {}
 
 
-ALL_STAGES = ("V", "V2", "V3", "F")
+# ---------------------------------------------------------------------------
+# Phase 6, Stufen G und M: eichfixierte Constraintreduktion und
+# Quadraturkonvergenz in M. Dieselben Familien, derselbe Jet-Apparat.
+#
+# Vergleich von vier Reduktionsweisungen auf IDENTISCHEN Randdaten:
+#   S1  Kette komplett (C_0..C_{2K}) mit Pseudoinverser  - Behandlung aus §19.9
+#   S2  bereinigte Kette (ohne das im Sektor eps_m=0 identisch verschwindende C_0):
+#       exakte Inverse, Zahl der zugenommenen Eichbedingungen 0, also K-unabhaengig
+#   S3  bereinigte Kette plus genau ZWEI Eichbedingungen fester Bauart (a_0 und c),
+#       also (2+2K)x(2+2K)-Klammermatrix mit in K fester Bedingungszahl 2
+#   S4  bereinigte Kette plus a_1..a_{ng-1} (Zahl ng-1 = K(1+eps_g)) als Vergleich
+#       fuer eine nicht in K feste Bedingungszahl
+# Gemessen werden pro Weisung Rang, Kondition und Determinante der Klammermatrix,
+# Multiplikatormnorm, Konsistenzrest ||s + omega u|| und die relative Korrektur der
+# Fuehrung; bei den eichfixierten Weisungen zusaetzlich Rang und Kleinstsingularwert
+# der Vertraeglichkeitsmatrix {G_i, C_A} sowie die Eichanderung {G_i, Hbar}. Ferner die
+# konstante Matrix kappa[A,j] = dC_A/dPa_j und der Rest der starken Impulsconstraint
+# ausserhalb der Galerkin-Spannmenge (Messung des in §19.7 ausgewiesenen Regularisierungsdefekts).
+# ---------------------------------------------------------------------------
+def bracket_matrix(Ja: np.ndarray, Jb: np.ndarray, nq: int) -> np.ndarray:
+    return (np.einsum("nAu,nBu->nAB", Ja[..., :nq], Jb[..., nq:])
+            - np.einsum("nAu,nBu->nAB", Ja[..., nq:], Jb[..., :nq]))
+
+
+def _menge_jacobi(fam: Family, Jac: np.ndarray, chain, gauges) -> np.ndarray:
+    """Jacobi-Zeilen der Menge (C_A)_{A in chain} plus Eichbedingungen (Einheitszeilen).
+
+    Die Eichbedingungen sind durchgaengig Konfigurationsvariablen G = z_u, ihre Jacobi-
+    Zeile ist der Einheitsvektor e_u. Die Klammern {z_u, chi_a} liefert bracket_matrix
+    unmittelbar aus diesen Zeilen, eine separate Differentiation ist nicht noetig.
+    """
+    rows = [Jac[:, [1 + A for A in chain], :]]
+    if gauges:
+        n = Jac.shape[0]
+        G = np.zeros((len(gauges), fam.ndim))
+        for i, u in enumerate(gauges):
+            G[i, u] = 1.0
+        rows.append(np.broadcast_to(G[None, :, :], (n, len(gauges), fam.ndim)))
+    return np.concatenate(rows, axis=1)
+
+
+def _det_stats(stack: np.ndarray) -> dict:
+    """Determinantenstatistik eines Stapels quadratischer Matrices ueber slogdet.
+
+    Bei ungerader Elementzahl einer antisymmetrischen Matrix ist die Determinante
+    identisch null. Erscheint das als det_singulaer = Anzahl der Randdaten, ist das eine
+    Kontrollaussage ueber die Struktur, nicht ueber die Rechengenauigkeit.
+    """
+    if stack.ndim == 2:
+        stack = stack[None]
+    sign, logabs = np.linalg.slogdet(stack)
+    ok = (sign != 0.0) & np.isfinite(logabs)
+    out = {"det_singulaer": int((~ok).sum()), "det_nicht_singulaer": int(ok.sum())}
+    if bool(ok.any()):
+        v = logabs[ok] / np.log(10.0)
+        out["det_log10_med"] = float(np.median(v))
+        out["det_log10_min"] = float(np.min(v))
+        out["det_log10_max"] = float(np.max(v))
+    return out
+
+
+def _rangstat(matrices: list) -> dict:
+    """Rangstatistik ueber kleine Matrices (numpy-Standardtoleranz, toleranzabhaengig)."""
+    rk = [int(np.linalg.matrix_rank(m)) for m in matrices]
+    cnt: dict = {}
+    for r in rk:
+        cnt[str(int(r))] = cnt.get(str(int(r)), 0) + 1
+    return {"rang_med": float(np.median(rk)), "rang_min": int(min(rk)),
+            "rang_max": int(max(rk)), "rang_verteilung": cnt}
+
+
+def _rel_korrektur(fam: Family, Jred: np.ndarray, Om: np.ndarray, chiH: np.ndarray,
+                   gH: np.ndarray) -> dict:
+    """Relative Korrektur der Fuehrung, Multiplikatormnorm und Konsistenzrest.
+
+    chiH[n,a] = {chi_a, Hbar} auf der Flaeche (die Sekundaarterme der gewaehlten Menge),
+    Om[n,a,b] = {chi_a, chi_b}. Das Konsistenzsystem des Gesamthamiltonians
+    H_T = Hbar + u^a chi_a lautet auf der Constraintflaeche (dort verschwinden die
+    Glieder {chi_a, u^b} chi_b) in Matrixschreibweise s + Om u = 0 mit s = chiH. Loesbar
+    ist es genau dann, wenn s im Wertebereich von Om liegt; der gemessene Rest
+    ||s + Om u|| mit u = -Om^+ s ist gerade der Anteil von s ausserhalb dieses
+    Wertebereichs, also das, was neue Sekundairconstraints erfordern wuerde.
+    """
+    cb = klammer_covector(fam, Jred)
+    pinv = omega_pinv(Om)
+    corr = np.einsum("naj,nab,nb->nj", cb, pinv, chiH)
+    naive = np.concatenate([gH[..., fam.nq:], -gH[..., :fam.nq]], axis=1)
+    nn = np.linalg.norm(naive, axis=1)
+    cn = np.linalg.norm(corr, axis=1)
+    rel = cn / np.maximum(nn, 1e-300)
+    u = -np.einsum("nab,nb->na", pinv, chiH)
+    resid = chiH + np.einsum("nab,nb->na", Om, u)
+    sn = np.linalg.norm(chiH, axis=1)
+    rn = np.linalg.norm(resid, axis=1)
+    return {"rel_med": float(np.median(rel)), "rel_max": float(rel.max()),
+            "multiplik_norm_med": float(np.median(np.linalg.norm(u, axis=1))),
+            "multiplik_norm_max": float(np.linalg.norm(u, axis=1).max()),
+            "korrektur_abs_med": float(np.median(cn)),
+            "naives_feld_med": float(np.median(nn)),
+            "sekundaer_med": float(np.median(sn)), "sekundaer_max": float(sn.max()),
+            "konsistenz_rest_med": float(np.median(rn)),
+            "konsistenz_rest_max": float(rn.max()),
+            "konsistenz_relativ_med": float(np.median(rn / np.maximum(sn, 1e-300)))}
+
+
+def starker_constraintrest(fam: Family, Y: np.ndarray) -> dict:
+    """Anteil der Impulsconstraint-Dichte r ausserhalb der Spannmenge der Testfunktionen.
+
+    Auf der Galerkin-Flaeche ist <r w_A> = 0 fuer alle A, punktweise muss r trotzdem
+    nicht verschwinden. Der Restanteil misst genau diesen Regularisierungsdefekt
+    (in §19.7 als nicht behebbarer sin 2 theta-Anteil ausgewiesen).
+    """
+    S = fam.grid_values(Y)
+    r = S[:, :, 5] / 3.0 - S[:, :, 6] * S[:, :, 3]
+    C = np.einsum("nm,mA->nA", r, fam.W) / fam.M                 # <r w_A>, W = (M, nW)
+    # Orthogonale Projektion auf die Galerkin-Spannmenge: Nenner <w_A^2> = 1 (Mittelwert)
+    # bzw. 1/2 (Mode). Die doppelt normierte Basis APg ist die zu Pa kanonisch konjugierte
+    # Basis und darf fuer die Rueckprojektion nicht benutzt werden (Faktor 2 zu gross).
+    nrm = (np.einsum("mA,mA->A", fam.Ag, fam.Ag)) / fam.M
+    par = np.einsum("nA,mA->nm", C / nrm, fam.Ag)
+    res = r - par
+    rn = np.linalg.norm(r, axis=1)
+    q = np.linalg.norm(res, axis=1) / np.maximum(rn, 1e-300)
+    # Fourieramplitude des sin 2 theta-Anteils: <sin^2 2theta> = 1/2, also Faktor 2
+    s2 = 2.0 * np.einsum("nm,m->n", r, np.sin(4.0 * np.pi * np.arange(fam.M) / fam.M)) / fam.M
+    return {"restanteil_rel_med": float(np.median(q)), "restanteil_rel_max": float(q.max()),
+            "restanteil_abs_med": float(np.median(np.linalg.norm(res, axis=1))),
+            "r_max": float(np.max(np.abs(r))),
+            "klammer_chi_max": float(np.max(np.abs(C))),
+            "sin2theta_amplitude_med": float(np.median(np.abs(s2))),
+            "sin2theta_amplitude_max": float(np.abs(s2).max()),
+            "sin2theta_rel_med": float(np.median(np.abs(s2) / np.maximum(rn / np.sqrt(fam.M), 1e-300)))}
+
+
+def g_one(job):
+    """Eine Variante komplett (Top-Level-Funktion fuer ProcessPoolExecutor).
+
+    job = (K, geom_cos, matter_cos, seed, npts, Y0). Wird Y0 mitgegeben, wird genau
+    dieser Startdatensatz benutzt (shared stream, damit die Randdaten bitgleich mit den
+    Randdaten der Stufe F und damit mit der Tabelle in §19.9 sind); andernfalls wird aus
+    seed eine eigene Zufallsfolge gezogen.
+    """
+    K, gcos, mcos, seed, npts, Y0 = job
+    tf = time.time()
+    fam = Family(K, geom_cos=gcos, matter_cos=mcos)
+    if Y0 is None:
+        rng = np.random.default_rng(seed)
+        Y0 = sample(fam, npts, rng)
+    Y, conv, restmax, used = newton_surface(fam, Y0)
+    Ys = Y[conv]
+    out = {"variante": fam.label, "K": K, "geom_cos": int(gcos), "matter_cos": int(mcos),
+           "phasendim": fam.ndim, "nW": fam.nW, "randdaten": npts,
+           "newton_konvergiert": int(conv.sum()), "newton_rest_max": restmax,
+           "newton_iterationen_med": float(np.median(used))}
+    if Ys.shape[0] == 0:
+        out["bemerkung"] = "keine Constraintloesung"
+        return out
+    chi, Jac = chi_all(fam, Ys)
+    _, gH, _ = jets(fam, Ys, "H")
+    JC_full = Jac[:, 1:, :]                       # Zeilen C_0..C_{nW-1}
+    # Eichbedingungen fester Bauart: (a) a_0 und c - Zahl 2, unabhaengig von K;
+    # (b) a_1..a_{ng-1} - Zahl ng-1 = K(1+eps_g), waechst mit K.
+    gauge_a0c = [0, fam.ng]
+    gauge_moden = list(range(1, fam.ng))
+    weisungen = (("S1_kette_komplett", list(range(fam.nW)), []),
+                 ("S2_bereinigte_kette", list(range(1, fam.nW)), []),
+                 ("S3_eichfixiert_2", list(range(1, fam.nW)), gauge_a0c),
+                 ("S4_eichfixiert_2K", list(range(1, fam.nW)), gauge_moden))
+    for tag, chain, gauges in weisungen:
+        Jset = _menge_jacobi(fam, Jac, chain, gauges)
+        om = bracket_matrix(Jset, Jset, fam.nq)
+        an = analyse_omega(om)
+        entry = {"elemente": int(Jset.shape[1]), "eichbedingungen": len(gauges),
+                 "rang_med": an["rang_med"], "rang_verteilung": an["rang_verteilung"],
+                 "sigma_min_nz_med": an["sigma_min_nz_med"],
+                 "sigma_min_nz_min": an["sigma_min_nz_min"],
+                 "kondition_med": an["kondition_med"], "kondition_max": an["kondition_max"],
+                 "omega_max": an["omega_max"],
+                 **_det_stats(om),
+                 **_rel_korrektur(fam, Jset, om, pbf_vec(Jset, gH, fam.nq), gH),
+                 **dirac_korrektur(fam, Jset, om)}
+        if gauges:
+            Jch = Jac[:, [1 + A for A in chain], :]
+            Jg = Jset[:, len(chain):, :]
+            kg = bracket_matrix(Jg, Jch, fam.nq)          # (N, nEich, nKette)
+            entry["eichkompatibilitaet"] = _rangstat([kg[i] for i in range(kg.shape[0])])
+            sg = [float(np.linalg.svd(m, compute_uv=False)[-1]) for m in kg]
+            entry["eichkompatibilitaet_sigma_min_med"] = float(np.median(sg))
+            entry["eichkompatibilitaet_sigma_min_min"] = float(np.min(sg))
+            entry["eichanderung_med"] = float(np.median(np.abs(pbf_vec(Jg, gH, fam.nq))))
+        out[tag] = entry
+    # kappa: zustaendige Konstante der Eichvertraeglichkeit. Zeilen = Ketten-
+    # elemente aus der Reduktionsmenge (C_1..C_{nW-1}), Spalten = kanonisch zu den
+    # Eichbedingungen a_1..a_{ng-1} gehoerende Geometrieimpulse. Quadrat 2K x 2K.
+    kap = JC_full[:, 1:, fam.nq + 1:fam.nq + fam.ng]
+    kap_var = float(np.max(np.abs(kap - kap[:1])))
+    kap_c0 = float(np.max(np.abs(JC_full[:, 0, fam.nq + 1:fam.nq + fam.ng])))
+    kap0 = kap[0]
+    singk = np.linalg.svd(kap0, compute_uv=False)
+    # Entkopplung der Mittelprojektion von Kette und Eichbedingungen
+    Grows = _menge_jacobi(fam, Jac, [], gauge_a0c)
+    C0 = Jac[:, 1:2, :]
+    kom_C0_G = float(np.max(np.abs(bracket_matrix(C0, Grows, fam.nq))))
+    kom_C0_C = float(np.max(np.abs(bracket_matrix(C0, JC_full, fam.nq))))
+    # Klammern der beiden festen Eichbedingungen mit der Kette (Zustaandskonstanten):
+    # {a_0, C_A} = dC_A/dP_0 (P' fuehrt keine Nullmode) und {c, C_A} = dC_A/dp_0.
+    klammer_a0_C = float(np.max(np.abs(JC_full[:, :, fam.nq])))
+    klammer_c_C = float(np.max(np.abs(JC_full[:, :, fam.nq + fam.ng])))
+    out.update({
+        "constraint_rest_max": float(np.max(np.abs(chi))),
+        "klammer_a0_kette_max": klammer_a0_C,
+        "klammer_c_kette_max": klammer_c_C,
+        "kappa_zustaendsunabhaengig_max_abweichung": kap_var,
+        "kappa_c0_geometrieimpuls_max": kap_c0,
+        "kappa_abs_det": float(abs(np.linalg.det(kap0))),
+        "kappa_sigma_min": float(singk[-1]), "kappa_sigma_max": float(singk[0]),
+        "kom_C0_eichbedingung_max": kom_C0_G, "kom_C0_kette_max": kom_C0_C,
+        **starker_constraintrest(fam, Ys),
+        "zeit_s": time.time() - tf,
+    })
+    return out
+
+
+def stage_G(variants, npts: int = 48, seed: int = 20261105, workers: int = 4,
+            shared_stream: bool = False, key: str = "G") -> None:
+    log(f"Stufe {key}: eichfixierte Reduktion, {len(variants)} Varianten, {npts} Randdaten, "
+        f"{'gemeinsamer Zufallsstrom (bitgleich zu Stufe F)' if shared_stream else 'eigener Zufallsstrom je Variante'}")
+    if shared_stream:
+        rng_master = np.random.default_rng(seed)
+        jobs = [(K, g, m, None, npts, sample(Family(K, geom_cos=g, matter_cos=m), npts, rng_master))
+                for (K, g, m) in variants]
+    else:
+        jobs = [(K, g, m, seed + 7919 * i, npts, None)
+                for i, (K, g, m) in enumerate(variants)]
+    rows: list = []
+    try:
+        from concurrent.futures import ProcessPoolExecutor
+        with ProcessPoolExecutor(max_workers=max(1, min(workers, len(jobs)))) as ex:
+            for row in ex.map(g_one, jobs):
+                rows.append(row)
+                res[key] = rows
+                dump(key)
+                log(f"   {row['variante']}: Kondition Med "
+                    f"S1 {row['S1_kette_komplett']['kondition_med']:.3e} "
+                    f"S2 {row['S2_bereinigte_kette']['kondition_med']:.3e} "
+                    f"S3 {row['S3_eichfixiert_2']['kondition_med']:.3e} "
+                    f"S4 {row['S4_eichfixiert_2K']['kondition_med']:.3e}; "
+                    f"rel Korrektur Med "
+                    f"S1 {row['S1_kette_komplett']['rel_med']:.3e} "
+                    f"S2 {row['S2_bereinigte_kette']['rel_med']:.3e} "
+                    f"S3 {row['S3_eichfixiert_2']['rel_med']:.3e} "
+                    f"S4 {row['S4_eichfixiert_2K']['rel_med']:.3e}; "
+                    f"S3 det singulaer {row['S3_eichfixiert_2']['det_singulaer']} "
+                    f"von {row['newton_konvergiert']}, "
+                    f"Restanteil {row['restanteil_rel_med']:.3f}, "
+                    f"kappa |det| {row['kappa_abs_det']:.3e} ({row['zeit_s']:.1f}s)")
+    except Exception as exc:                                        # noqa: BLE001
+        log(f"   Parallelisierung fehlgeschlagen ({exc}), serialer Rueckfall")
+        rows = []
+        for job in jobs:
+            row = g_one(job)
+            rows.append(row)
+            res[key] = rows
+            dump(key)
+            log(f"   {row['variante']}: serial fertig ({row.get('zeit_s', float('nan')):.1f}s)")
+    res[f"{key}_meta"] = {"npts": npts, "seed": seed,
+                          "randdaten_pro_variante": ("gemeinsamer Strom, bitgleich zu Stufe F"
+                                                     if shared_stream else
+                                                     "eigener Zufallsstrom je Variante (seed + 7919*i)"),
+                          "varianten": [list(v) for v in variants]}
+    dump(key)
+
+
+def stage_M(variants, npts: int = 48, seed: int = 20261106) -> None:
+    """Quadraturkonvergenz in M: Zustand bei M=512 loesen, bei 256/512/1024 bewerten."""
+    log(f"Stufe M: Quadraturkonvergenz in M, {len(variants)} Varianten, {npts} Randdaten")
+    rows: list = []
+    for K, gcos, mcos in variants:
+        tf = time.time()
+        fam = Family(K, geom_cos=gcos, matter_cos=mcos, Mpts=512)
+        rng = np.random.default_rng(seed)
+        Y0 = sample(fam, npts, rng)
+        Y, conv, restmax, _ = newton_surface(fam, Y0)
+        Ys = Y[conv]
+        row = {"variante": fam.label, "loesungen": int(conv.sum()),
+               "loesungs_M": 512, "newton_rest_max": restmax, "pro_M": {}}
+        base: dict = {}
+        for MM in (256, 512, 1024):
+            famM = Family(K, geom_cos=gcos, matter_cos=mcos, Mpts=MM)
+            chiM, JacM = chi_all(famM, Ys)
+            JCb = JacM[:, 2:, :]                       # S2: bereinigte Kette
+            _, gHM, _ = jets(famM, Ys, "H")
+            om = bracket_matrix(JCb, JCb, famM.nq)
+            an = analyse_omega(om)
+            entry = {"constraint_rest_max": float(np.max(np.abs(chiM))),
+                     "omega_max": an["omega_max"], "rang_med": an["rang_med"],
+                     "kondition_med": an["kondition_med"], "kondition_max": an["kondition_max"],
+                     **_det_stats(om),
+                     **_rel_korrektur(famM, JCb, om, pbf_vec(JCb, gHM, famM.nq), gHM)}
+            row["pro_M"][str(MM)] = entry
+            base[MM] = (chiM, om)
+        chi512, om512 = base[512]
+        for MM in (256, 1024):
+            chiM, omM = base[MM]
+            e = row["pro_M"][str(MM)]
+            e["omega_differenz_gegen_512_max"] = float(np.max(np.abs(omM - om512)))
+            e["omega_differenz_rel"] = float(np.max(np.abs(omM - om512))
+                                             / max(float(np.max(np.abs(om512))), 1e-300))
+            e["hbar_differenz_gegen_512_max"] = float(np.max(np.abs(chiM[:, 0] - chi512[:, 0])))
+            e["kette_differenz_gegen_512_max"] = float(np.max(np.abs(chiM[:, 1:] - chi512[:, 1:])))
+            e["rel_korrektur_differenz_gegen_512"] = float(abs(
+                e["rel_med"] - row["pro_M"]["512"]["rel_med"]))
+        rows.append(row)
+        res["M"] = rows
+        dump("M")
+        log(f"   {fam.label}: Diff omega 256-512 "
+            f"{row['pro_M']['256']['omega_differenz_gegen_512_max']:.3e}, "
+            f"1024-512 {row['pro_M']['1024']['omega_differenz_gegen_512_max']:.3e}, "
+            f"Kondition {row['pro_M']['256']['kondition_med']:.3f} / "
+            f"{row['pro_M']['512']['kondition_med']:.3f} / "
+            f"{row['pro_M']['1024']['kondition_med']:.3f} ({time.time() - tf:.1f}s)")
+    res["M_meta"] = {"npts": npts, "seed": seed, "M_Werte": [256, 512, 1024],
+                     "varianten": [list(v) for v in variants]}
+    dump("M")
+
+
+ALL_STAGES = ("V", "V2", "V3", "F", "G", "M")
 VARIANTS = [(1, True, False), (1, True, True), (2, True, True), (3, True, True),
             (4, True, True), (2, True, False), (3, True, False)]
+VARIANTS_G = [(1, True, False), (2, True, False), (3, True, False), (4, True, False),
+              (1, True, True), (2, True, True), (3, True, True), (4, True, True)]
+VARIANTS_M = [(2, True, False), (3, True, True)]
+VARIANTS_ERWEITERT = [(4, True, False)]
 
 
 def main(argv=None) -> None:
@@ -657,6 +987,14 @@ def main(argv=None) -> None:
         stage_V3()
     if "F" in wanted:
         stage_F(VARIANTS)
+    if "G" in wanted:
+        # Stufe G auf denselben Randdaten wie Stufe F (und damit wie die Tabelle in 19.9):
+        # gemeinsamer Zufallsstrom in F-Reihenfolge. Die Modenzahl K = 4 ohne
+        # Materie-Cosinus-Moden hat kein F-Pendant und laeuft als eigene Erweiterung.
+        stage_G(VARIANTS, shared_stream=True)
+        stage_G(VARIANTS_ERWEITERT, workers=1, key="G_erweitert")
+    if "M" in wanted:
+        stage_M(VARIANTS_M)
     log(f"fertig: {wanted}")
 
 
